@@ -32,6 +32,23 @@ xyfpredictions <- classmat2classvec(predict(kohmap)$unit.predictions)
 bgcols <- c("gray", "pink", "lightgreen")
 plot(kohmap, type="mapping", col = wine.classes+1, pchs = wine.classes, bgcol = bgcols[as.integer(xyfpredictions)], main = "another mapping plot")
 
+## PREDICTION
+data(wines)
+set.seed(7)
+training <- sample(nrow(wines), 120)
+Xtraining <- scale(wines[training, ])
+Xtest <- scale(wines[-training, ], center = attr(Xtraining, "scaled:center"), scale = attr(Xtraining, "scaled:scale"))
+
+som.wines <- som(Xtraining, grid = somgrid(5, 5, "hexagonal"))
+som.prediction <- predict(som.wines, newdata = Xtest,  trainX = Xtraining,  trainY = factor(wine.classes[training]))
+
+
+
+table(wine.classes[-training], som.prediction$prediction)
+plot(som.prediction)
+
+plot(som.prediction, type="mapping", col = som.prediction$unit.predictions+1, pchs = som.prediction$unit.predictions, bgcol = bgcols[as.integer(som.prediction$unit.predictions)], main = "another mapping plot")
+
 
 ################################################
 ## Example 2
